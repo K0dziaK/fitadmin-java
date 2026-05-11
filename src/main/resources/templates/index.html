@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>FitAdmin</title>
+</head>
+<body>
+<h1>Lista Klientów</h1>
+
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>Imię</th>
+    <th>Nazwisko</th>
+  </tr>
+  <tr th:each="customer : ${customers}">
+    <td th:text="${customer.id}"></td>
+    <td th:text="${customer.firstName}"></td>
+    <td th:text="${customer.lastName}"></td>
+  </tr>
+</table>
+</body>
+</html>
