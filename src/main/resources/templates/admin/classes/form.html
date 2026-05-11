@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${classForm?.id != null ? 'Edytuj' : 'Dodaj'} + ' zajęcia — FitAdmin'">Zajęcia — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: authenticated}"></div>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-section"><div class="sidebar-title">Zarządzanie</div>
+        <a href="/admin/dashboard.html"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard</a>
+        <a href="/admin/classes/list.html" class="active"><i data-lucide="dumbbell" style="width:18px;height:18px;"></i> Zajęcia</a>
+        <a href="/admin/trainers/list.html"><i data-lucide="users" style="width:18px;height:18px;"></i> Trenerzy</a>
+        <a href="/admin/membership-types/list.html"><i data-lucide="credit-card" style="width:18px;height:18px;"></i> Typy karnetów</a>
+      </div>
+    </aside>
+    <div class="admin-content">
+      <div class="page-header">
+        <div class="breadcrumb"><a th:href="@{/admin}">Admin</a><span>/</span><a th:href="@{/admin/classes}">Zajęcia</a><span>/</span><span th:text="${classForm?.id != null ? 'Edytuj' : 'Dodaj'}">Dodaj</span></div>
+        <h1 th:text="${classForm?.id != null ? 'Edytuj zajęcia' : 'Dodaj nowe zajęcia'}">Dodaj nowe zajęcia</h1>
+      </div>
+      <div class="card" style="max-width:600px;">
+        <form th:action="${classForm?.id != null ? '/admin/classes/' + classForm.id + '/edit' : '/admin/classes/new'}" th:object="${classForm}" method="post">
+          <div class="form-group">
+            <label class="form-label" for="name">Nazwa zajęć</label>
+            <input type="text" id="name" th:field="*{name}" class="form-input" placeholder="np. Yoga poranna" required/>
+            <p class="form-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label" for="dayOfWeek">Dzień tygodnia</label>
+              <select id="dayOfWeek" th:field="*{dayOfWeek}" class="form-select" required>
+                <option value="">Wybierz...</option>
+                <option value="MONDAY">Poniedziałek</option>
+                <option value="TUESDAY">Wtorek</option>
+                <option value="WEDNESDAY">Środa</option>
+                <option value="THURSDAY">Czwartek</option>
+                <option value="FRIDAY">Piątek</option>
+                <option value="SATURDAY">Sobota</option>
+                <option value="SUNDAY">Niedziela</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="time">Godzina</label>
+              <input type="time" id="time" th:field="*{time}" class="form-input" required/>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label" for="duration">Czas trwania (min)</label>
+              <input type="number" id="duration" th:field="*{duration}" class="form-input" min="15" max="180" placeholder="60" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="maxSpots">Maks. uczestników</label>
+              <input type="number" id="maxSpots" th:field="*{maxSpots}" class="form-input" min="1" max="100" placeholder="15" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="trainerId">Trener</label>
+            <select id="trainerId" th:field="*{trainerId}" class="form-select" required>
+              <option value="">Wybierz trenera...</option>
+              <option th:each="t : ${trainers}" th:value="${t.id}" th:text="${t.fullName}">Anna Nowak</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="description">Opis</label>
+            <textarea id="description" th:field="*{description}" class="form-input" rows="4" placeholder="Opis zajęć..." style="resize:vertical;"></textarea>
+          </div>
+          <div class="flex gap-2 mt-2">
+            <button type="submit" class="btn btn-primary btn-lg"><i data-lucide="save" style="width:18px;height:18px;"></i> Zapisz</button>
+            <a th:href="@{/admin/classes}" href="/admin/classes/list.html" class="btn btn-secondary btn-lg">Anuluj</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

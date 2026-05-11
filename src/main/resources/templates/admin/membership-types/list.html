@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Typy karnetów — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: authenticated}"></div>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-section"><div class="sidebar-title">Zarządzanie</div>
+        <a href="/admin/dashboard.html"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard</a>
+        <a href="/admin/classes/list.html"><i data-lucide="dumbbell" style="width:18px;height:18px;"></i> Zajęcia</a>
+        <a href="/admin/trainers/list.html"><i data-lucide="users" style="width:18px;height:18px;"></i> Trenerzy</a>
+        <a href="/admin/membership-types/list.html" class="active"><i data-lucide="credit-card" style="width:18px;height:18px;"></i> Typy karnetów</a>
+        <a href="/admin/users/list.html"><i data-lucide="user-cog" style="width:18px;height:18px;"></i> Użytkownicy</a>
+        <a href="/admin/attendance/list.html"><i data-lucide="clipboard-check" style="width:18px;height:18px;"></i> Lista obecności</a>
+      </div>
+    </aside>
+    <div class="admin-content">
+      <div class="page-header">
+        <div class="flex justify-between items-center">
+          <div><h1>Typy karnetów</h1><p>Zarządzaj ofertą karnetów.</p></div>
+          <a th:href="@{/admin/membership-types/new}" href="/admin/membership-types/form.html" class="btn btn-primary"><i data-lucide="plus" style="width:16px;height:16px;"></i> Dodaj typ</a>
+        </div>
+      </div>
+      <div th:if="${success}" class="alert alert-success"><i data-lucide="check-circle" style="width:18px;height:18px;"></i> <span th:text="${success}">OK</span></div>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Nazwa</th><th>Cena</th><th>Czas trwania</th><th>Wyróżniony</th><th>Akcje</th></tr></thead>
+          <tbody>
+            <tr th:each="mt : ${membershipTypes}">
+              <td class="font-semibold" th:text="${mt.name}">Premium</td>
+              <td th:text="${mt.price + ' zł'}">149 zł</td>
+              <td th:text="${mt.durationDays + ' dni'}">30 dni</td>
+              <td><span class="badge" th:classappend="${mt.featured ? 'badge-green' : 'badge-red'}" th:text="${mt.featured ? 'Tak' : 'Nie'}">Tak</span></td>
+              <td class="flex gap-1">
+                <a th:href="@{/admin/membership-types/{id}/edit(id=${mt.id})}" class="btn btn-secondary btn-sm"><i data-lucide="edit" style="width:14px;height:14px;"></i></a>
+                <form th:action="@{/admin/membership-types/{id}/delete(id=${mt.id})}" method="post" style="display:inline;" onsubmit="return confirm('Na pewno usunąć?');">
+                  <button type="submit" class="btn btn-danger btn-sm"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>
+                </form>
+              </td>
+            </tr>
+            <th:block th:if="${membershipTypes == null}">
+              <tr><td class="font-semibold">Podstawowy</td><td>89 zł</td><td>30 dni</td><td><span class="badge badge-red">Nie</span></td>
+                <td class="flex gap-1"><a href="/admin/membership-types/form.html" class="btn btn-secondary btn-sm"><i data-lucide="edit" style="width:14px;height:14px;"></i></a><button class="btn btn-danger btn-sm"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button></td></tr>
+              <tr><td class="font-semibold">Premium</td><td>149 zł</td><td>30 dni</td><td><span class="badge badge-green">Tak</span></td>
+                <td class="flex gap-1"><a href="/admin/membership-types/form.html" class="btn btn-secondary btn-sm"><i data-lucide="edit" style="width:14px;height:14px;"></i></a><button class="btn btn-danger btn-sm"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button></td></tr>
+              <tr><td class="font-semibold">VIP</td><td>249 zł</td><td>30 dni</td><td><span class="badge badge-red">Nie</span></td>
+                <td class="flex gap-1"><a href="/admin/membership-types/form.html" class="btn btn-secondary btn-sm"><i data-lucide="edit" style="width:14px;height:14px;"></i></a><button class="btn btn-danger btn-sm"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button></td></tr>
+            </th:block>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

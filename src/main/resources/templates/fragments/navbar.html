@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+  <!-- ===== NAVBAR (public - before login) ===== -->
+  <nav class="navbar" th:fragment="public">
+    <div class="navbar-inner">
+      <a th:href="@{/}" href="/" class="navbar-brand">
+        <img th:src="@{/images/logo.svg}" src="/images/logo.svg" alt="FitAdmin" style="width:32px;height:32px;"/>
+        <span>Fit<span class="brand-accent">Admin</span></span>
+      </a>
+      <button class="navbar-toggle" aria-label="Menu">
+        <i data-lucide="menu" style="width:24px;height:24px;"></i>
+      </button>
+      <div class="navbar-links">
+        <a th:href="@{/}" href="/">Strona główna</a>
+        <a th:href="@{/memberships}" href="/memberships/list.html">Karnety</a>
+        <a th:href="@{/classes/schedule}" href="/classes/schedule.html">Grafik zajęć</a>
+      </div>
+      <div class="navbar-actions">
+        <a th:href="@{/login}" href="/auth/login.html" class="btn btn-secondary btn-sm"><i data-lucide="log-in" style="width:16px;height:16px;"></i> <span>Zaloguj się</span></a>
+        <a th:href="@{/register}" href="/auth/register.html" class="btn btn-primary btn-sm"><span>Rejestracja</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== NAVBAR (authenticated - after login) ===== -->
+  <nav class="navbar" th:fragment="authenticated">
+    <div class="navbar-inner">
+      <a th:href="@{/dashboard}" href="/dashboard/index.html" class="navbar-brand">
+        <img th:src="@{/images/logo.svg}" src="/images/logo.svg" alt="FitAdmin" style="width:32px;height:32px;"/>
+        <span>Fit<span class="brand-accent">Admin</span></span>
+      </a>
+      <button class="navbar-toggle" aria-label="Menu">
+        <i data-lucide="menu" style="width:24px;height:24px;"></i>
+      </button>
+      <div class="navbar-links">
+        <a th:href="@{/dashboard}" href="/dashboard/index.html">Dashboard</a>
+        <a th:href="@{/classes/schedule}" href="/classes/schedule.html">Grafik</a>
+        <a th:href="@{/classes/my-reservations}" href="/classes/my-reservations.html">Moje rezerwacje</a>
+        <a th:href="@{/memberships/my}" href="/memberships/my.html">Moje karnety</a>
+        <!--/* Admin-only links */-->
+        <a sec:authorize="hasAnyRole('ADMIN','OWNER')" th:href="@{/admin}" href="/admin/dashboard.html">Panel admina</a>
+      </div>
+      <div class="navbar-actions">
+        <a th:href="@{/profile}" href="/profile/edit.html" class="btn btn-secondary btn-sm" title="Profil">
+          <i data-lucide="user" style="width:16px;height:16px;"></i>
+        </a>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+          <button type="submit" class="btn btn-secondary btn-sm"><i data-lucide="log-out" style="width:16px;height:16px;"></i> <span>Wyloguj</span></button>
+        </form>
+      </div>
+    </div>
+  </nav>
+</body>
+</html>

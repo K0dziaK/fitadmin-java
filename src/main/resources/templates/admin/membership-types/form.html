@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${mtForm?.id != null ? 'Edytuj' : 'Dodaj'} + ' typ karnetu — FitAdmin'">Typ karnetu — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: authenticated}"></div>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-section"><div class="sidebar-title">Zarządzanie</div>
+        <a href="/admin/dashboard.html"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard</a>
+        <a href="/admin/classes/list.html"><i data-lucide="dumbbell" style="width:18px;height:18px;"></i> Zajęcia</a>
+        <a href="/admin/trainers/list.html"><i data-lucide="users" style="width:18px;height:18px;"></i> Trenerzy</a>
+        <a href="/admin/membership-types/list.html" class="active"><i data-lucide="credit-card" style="width:18px;height:18px;"></i> Typy karnetów</a>
+      </div>
+    </aside>
+    <div class="admin-content">
+      <div class="page-header">
+        <div class="breadcrumb"><a th:href="@{/admin}">Admin</a><span>/</span><a th:href="@{/admin/membership-types}">Typy karnetów</a><span>/</span><span th:text="${mtForm?.id != null ? 'Edytuj' : 'Dodaj'}">Dodaj</span></div>
+        <h1 th:text="${mtForm?.id != null ? 'Edytuj typ karnetu' : 'Dodaj nowy typ karnetu'}">Dodaj nowy typ karnetu</h1>
+      </div>
+      <div class="card" style="max-width:600px;">
+        <form th:action="${mtForm?.id != null ? '/admin/membership-types/' + mtForm.id + '/edit' : '/admin/membership-types/new'}" th:object="${mtForm}" method="post">
+          <div class="form-group">
+            <label class="form-label" for="name">Nazwa</label>
+            <input type="text" id="name" th:field="*{name}" class="form-input" placeholder="np. Premium" required/>
+            <p class="form-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-group">
+              <label class="form-label" for="price">Cena (zł)</label>
+              <input type="number" id="price" th:field="*{price}" class="form-input" min="0" step="0.01" placeholder="149.00" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="durationDays">Czas trwania (dni)</label>
+              <input type="number" id="durationDays" th:field="*{durationDays}" class="form-input" min="1" placeholder="30" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="description">Opis</label>
+            <textarea id="description" th:field="*{description}" class="form-input" rows="3" placeholder="Co obejmuje ten karnet..." style="resize:vertical;"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="features">Cechy (po jednej w linii)</label>
+            <textarea id="features" th:field="*{featuresText}" class="form-input" rows="4" placeholder="Dostęp do siłowni&#10;Zajęcia grupowe&#10;Dostęp 24/7" style="resize:vertical;"></textarea>
+          </div>
+          <div class="form-group flex items-center gap-2">
+            <input type="checkbox" id="featured" th:field="*{featured}" style="width:18px;height:18px;accent-color:var(--accent-green);"/>
+            <label for="featured" class="form-label" style="margin-bottom:0;">Wyróżniony (pokazywany jako „Najpopularniejszy")</label>
+          </div>
+          <div class="flex gap-2 mt-2">
+            <button type="submit" class="btn btn-primary btn-lg"><i data-lucide="save" style="width:18px;height:18px;"></i> Zapisz</button>
+            <a th:href="@{/admin/membership-types}" href="/admin/membership-types/list.html" class="btn btn-secondary btn-lg">Anuluj</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel admina — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">Przegląd</div>
+        <a href="/admin/dashboard.html" th:href="@{/admin}" class="active"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard</a>
+        <a href="/reports/index.html" th:href="@{/admin/reports}"><i data-lucide="bar-chart-3" style="width:18px;height:18px;"></i> Raporty</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">Zarządzanie</div>
+        <a href="/admin/classes/list.html" th:href="@{/admin/classes}"><i data-lucide="dumbbell" style="width:18px;height:18px;"></i> Zajęcia</a>
+        <a href="/admin/trainers/list.html" th:href="@{/admin/trainers}"><i data-lucide="users" style="width:18px;height:18px;"></i> Trenerzy</a>
+        <a href="/admin/membership-types/list.html" th:href="@{/admin/membership-types}"><i data-lucide="credit-card" style="width:18px;height:18px;"></i> Typy karnetów</a>
+        <a href="/admin/users/list.html" th:href="@{/admin/users}"><i data-lucide="user-cog" style="width:18px;height:18px;"></i> Użytkownicy</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">Trener</div>
+        <a href="/admin/attendance/list.html" th:href="@{/admin/attendance}"><i data-lucide="clipboard-check" style="width:18px;height:18px;"></i> Lista obecności</a>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="admin-content">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <p>Podsumowanie aktywności w systemie.</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-4 gap-3 mb-4">
+        <div class="card stat-card">
+          <div class="stat-value text-green" th:text="${totalClients ?: '156'}">156</div>
+          <div class="stat-label">Klientów</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-value text-blue" th:text="${activeMemberships ?: '89'}">89</div>
+          <div class="stat-label">Aktywnych karnetów</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-value text-purple" th:text="${totalClasses ?: '24'}">24</div>
+          <div class="stat-label">Zajęć w tygodniu</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-value text-orange" th:text="${reservationsThisWeek ?: '67'}">67</div>
+          <div class="stat-label">Rezerwacji w tym tygodniu</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+        <div class="card">
+          <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">Popularność zajęć</h2>
+          <div class="chart-container">
+            <canvas id="popularityChart"
+                    th:data-labels="${popularityLabels}"
+                    th:data-values="${popularityValues}"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">Nowi klienci / miesiąc</h2>
+          <div class="chart-container">
+            <canvas id="clientsChart"
+                    th:data-labels="${clientsLabels}"
+                    th:data-values="${clientsValues}"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

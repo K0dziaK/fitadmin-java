@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Moje rezerwacje — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+  <main class="container" style="padding-top:1rem;padding-bottom:3rem;">
+    <div class="page-header">
+      <div class="breadcrumb"><a th:href="@{/dashboard}">Dashboard</a><span>/</span><span>Moje rezerwacje</span></div>
+      <h1>Moje <span class="text-blue">rezerwacje</span></h1>
+      <p>Lista Twoich nadchodzących i zakończonych zajęć.</p>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success">
+      <i data-lucide="check-circle" style="width:18px;height:18px;"></i>
+      <span th:text="${success}">Operacja zakończona pomyślnie.</span>
+    </div>
+
+    <!-- Upcoming -->
+    <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">Nadchodzące</h2>
+    <div class="table-wrapper mb-4">
+      <table>
+        <thead>
+          <tr><th>Zajęcia</th><th>Data</th><th>Godzina</th><th>Trener</th><th>Status</th><th>Akcja</th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="r : ${upcomingReservations}">
+            <td>
+              <a th:href="@{/classes/{id}(id=${r.classId})}" class="font-semibold" th:text="${r.className}">Yoga</a>
+            </td>
+            <td th:text="${#temporals.format(r.date, 'dd.MM.yyyy')}">12.05.2026</td>
+            <td th:text="${r.time}">08:00</td>
+            <td th:text="${r.trainerName}">Anna Nowak</td>
+            <td><span class="badge badge-green">Potwierdzone</span></td>
+            <td>
+              <form th:action="@{/classes/{id}/cancel(id=${r.classId})}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm"><i data-lucide="x" style="width:14px;height:14px;"></i> Wypisz się</button>
+              </form>
+            </td>
+          </tr>
+          <!--/* Static fallback */-->
+          <tr th:if="${upcomingReservations == null}">
+            <td><a href="/classes/detail.html" class="font-semibold">Yoga poranna</a></td>
+            <td>12.05.2026</td><td>08:00</td><td>Anna Nowak</td>
+            <td><span class="badge badge-green">Potwierdzone</span></td>
+            <td><button class="btn btn-danger btn-sm"><i data-lucide="x" style="width:14px;height:14px;"></i> Wypisz się</button></td>
+          </tr>
+          <tr th:if="${upcomingReservations == null}">
+            <td><a href="/classes/detail.html" class="font-semibold">CrossFit</a></td>
+            <td>13.05.2026</td><td>18:00</td><td>Marek Wiśniewski</td>
+            <td><span class="badge badge-green">Potwierdzone</span></td>
+            <td><button class="btn btn-danger btn-sm"><i data-lucide="x" style="width:14px;height:14px;"></i> Wypisz się</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Past -->
+    <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">Zakończone</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th>Zajęcia</th><th>Data</th><th>Godzina</th><th>Trener</th><th>Obecność</th><th>Ocena</th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="r : ${pastReservations}">
+            <td th:text="${r.className}">Spinning</td>
+            <td th:text="${#temporals.format(r.date, 'dd.MM.yyyy')}">05.05.2026</td>
+            <td th:text="${r.time}">17:00</td>
+            <td th:text="${r.trainerName}">Katarzyna Zielińska</td>
+            <td>
+              <span class="badge" th:classappend="${r.attended ? 'badge-green' : 'badge-red'}"
+                    th:text="${r.attended ? 'Obecny' : 'Nieobecny'}">Obecny</span>
+            </td>
+            <td>
+              <a th:if="${!r.rated}" th:href="@{/classes/{id}(id=${r.classId})}" class="btn btn-secondary btn-sm">Oceń</a>
+              <span th:if="${r.rated}" class="text-orange">★ <span th:text="${r.rating}">4</span>/5</span>
+            </td>
+          </tr>
+          <!--/* Static fallback */-->
+          <tr th:if="${pastReservations == null}">
+            <td>Spinning</td><td>05.05.2026</td><td>17:00</td><td>Katarzyna Zielińska</td>
+            <td><span class="badge badge-green">Obecny</span></td>
+            <td><span style="color:var(--accent-orange);">★ 4/5</span></td>
+          </tr>
+          <tr th:if="${pastReservations == null}">
+            <td>Zumba</td><td>02.05.2026</td><td>16:00</td><td>Maria Lewandowska</td>
+            <td><span class="badge badge-red">Nieobecny</span></td>
+            <td><a href="/classes/detail.html" class="btn btn-secondary btn-sm">Oceń</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

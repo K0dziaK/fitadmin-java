@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+  <main class="container" style="padding-top:1rem;padding-bottom:3rem;">
+    <div class="page-header">
+      <h1>Witaj, <span class="text-green" th:text="${user?.firstName ?: 'Użytkowniku'}">Jan</span>!</h1>
+      <p>Oto podsumowanie Twojego konta.</p>
+    </div>
+
+    <!-- Stats row -->
+    <div class="grid grid-4 gap-3 mb-4">
+      <div class="card stat-card animate-in">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="stat-value text-green" th:text="${activeMembership != null ? 'Aktywny' : 'Brak'}">Aktywny</div>
+            <div class="stat-label">Status karnetu</div>
+          </div>
+          <div class="stat-icon" style="background:rgba(163,230,53,0.1);color:var(--accent-green);">
+            <i data-lucide="credit-card"></i>
+          </div>
+        </div>
+      </div>
+      <div class="card stat-card animate-in delay-1">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="stat-value text-blue" th:text="${upcomingReservations?.size() ?: '0'}">3</div>
+            <div class="stat-label">Nadchodzące zajęcia</div>
+          </div>
+          <div class="stat-icon" style="background:rgba(56,189,248,0.1);color:var(--accent-blue);">
+            <i data-lucide="calendar-check"></i>
+          </div>
+        </div>
+      </div>
+      <div class="card stat-card animate-in delay-2">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="stat-value" th:text="${totalClassesAttended ?: '0'}">12</div>
+            <div class="stat-label">Odbyłeś zajęć</div>
+          </div>
+          <div class="stat-icon" style="background:rgba(167,139,250,0.1);color:var(--accent-purple);">
+            <i data-lucide="trophy"></i>
+          </div>
+        </div>
+      </div>
+      <div class="card stat-card animate-in delay-3">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="stat-value" th:text="${membershipDaysLeft ?: '—'}">24</div>
+            <div class="stat-label">Dni do końca karnetu</div>
+          </div>
+          <div class="stat-icon" style="background:rgba(251,146,60,0.1);color:var(--accent-orange);">
+            <i data-lucide="clock"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+      <!-- Upcoming reservations -->
+      <div class="card" style="grid-column:span 1;">
+        <div class="flex justify-between items-center mb-2">
+          <h2 style="font-size:1.1rem;font-weight:700;">Nadchodzące zajęcia</h2>
+          <a th:href="@{/classes/my-reservations}" href="/classes/my-reservations.html" class="text-sm text-blue">Zobacz wszystkie →</a>
+        </div>
+        <div th:if="${upcomingReservations != null and !upcomingReservations.empty}">
+          <div th:each="res : ${upcomingReservations}" class="flex justify-between items-center" style="padding:0.75rem 0;border-bottom:1px solid var(--border-glass);">
+            <div>
+              <div class="font-semibold" th:text="${res.className}">Yoga poranna</div>
+              <div class="text-sm text-muted"><span th:text="${res.date}">2026-05-12</span> · <span th:text="${res.time}">08:00</span></div>
+            </div>
+            <span class="badge badge-green">Potwierdzone</span>
+          </div>
+        </div>
+        <!--/* Static fallback for preview */-->
+        <div th:if="${upcomingReservations == null}">
+          <div class="flex justify-between items-center" style="padding:0.75rem 0;border-bottom:1px solid var(--border-glass);">
+            <div>
+              <div class="font-semibold">Yoga poranna</div>
+              <div class="text-sm text-muted">2026-05-12 · 08:00</div>
+            </div>
+            <span class="badge badge-green">Potwierdzone</span>
+          </div>
+          <div class="flex justify-between items-center" style="padding:0.75rem 0;border-bottom:1px solid var(--border-glass);">
+            <div>
+              <div class="font-semibold">CrossFit</div>
+              <div class="text-sm text-muted">2026-05-13 · 18:00</div>
+            </div>
+            <span class="badge badge-green">Potwierdzone</span>
+          </div>
+          <div class="flex justify-between items-center" style="padding:0.75rem 0;">
+            <div>
+              <div class="font-semibold">Spinning</div>
+              <div class="text-sm text-muted">2026-05-14 · 17:00</div>
+            </div>
+            <span class="badge badge-blue">Oczekujące</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="card" style="grid-column:span 1;">
+        <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">Szybkie akcje</h2>
+        <div class="flex flex-col gap-2">
+          <a th:href="@{/classes/schedule}" href="/classes/schedule.html" class="btn btn-secondary btn-block" style="justify-content:flex-start;">
+            <i data-lucide="calendar" style="width:18px;height:18px;"></i> Zapisz się na zajęcia
+          </a>
+          <a th:href="@{/memberships}" href="/memberships/list.html" class="btn btn-secondary btn-block" style="justify-content:flex-start;">
+            <i data-lucide="credit-card" style="width:18px;height:18px;"></i> Kup karnet
+          </a>
+          <a th:href="@{/profile}" href="/profile/edit.html" class="btn btn-secondary btn-block" style="justify-content:flex-start;">
+            <i data-lucide="user" style="width:18px;height:18px;"></i> Edytuj profil
+          </a>
+          <a th:href="@{/memberships/my}" href="/memberships/my.html" class="btn btn-secondary btn-block" style="justify-content:flex-start;">
+            <i data-lucide="wallet" style="width:18px;height:18px;"></i> Moje karnety
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

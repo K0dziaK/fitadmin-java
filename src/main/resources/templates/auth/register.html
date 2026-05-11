@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rejestracja — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="auth-page">
+    <div class="card auth-card animate-in" style="max-width:480px;">
+      <div class="text-center mb-4">
+        <a th:href="@{/}" href="/" class="navbar-brand" style="justify-content:center;">
+          <img th:src="@{/images/logo.svg}" src="/images/logo.svg" alt="FitAdmin" style="width:40px;height:40px;"/>
+          <span style="font-size:1.5rem;">Fit<span class="brand-accent">Admin</span></span>
+        </a>
+      </div>
+      <h1>Utwórz konto</h1>
+      <p class="subtitle">Dołącz do FitAdmin i zacznij ćwiczyć!</p>
+
+      <!-- Global errors -->
+      <div th:if="${error}" class="alert alert-error">
+        <i data-lucide="alert-circle" style="width:18px;height:18px;"></i>
+        <span th:text="${error}">Wystąpił błąd podczas rejestracji.</span>
+      </div>
+
+      <form th:action="@{/register}" th:object="${registerForm}" action="#" method="post">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-group">
+            <label class="form-label" for="firstName">Imię</label>
+            <input type="text" id="firstName" th:field="*{firstName}" class="form-input" placeholder="Jan" required/>
+            <p class="form-error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Błąd</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lastName">Nazwisko</label>
+            <input type="text" id="lastName" th:field="*{lastName}" class="form-input" placeholder="Kowalski" required/>
+            <p class="form-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Błąd</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="regEmail">Adres e-mail</label>
+          <input type="email" id="regEmail" th:field="*{email}" class="form-input" placeholder="jan@example.com" required/>
+          <p class="form-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Błąd</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="phone">Telefon</label>
+          <input type="tel" id="phone" th:field="*{phone}" class="form-input" placeholder="+48 123 456 789"/>
+          <p class="form-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">Błąd</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="regPassword">Hasło</label>
+          <input type="password" id="regPassword" th:field="*{password}" class="form-input" placeholder="Min. 8 znaków" required minlength="8"/>
+          <p class="form-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Błąd</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword">Powtórz hasło</label>
+          <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-input" placeholder="••••••••" required/>
+          <p class="form-error" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Błąd</p>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg mt-2">
+          <i data-lucide="user-plus" style="width:18px;height:18px;"></i> Zarejestruj się
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Masz już konto? <a th:href="@{/login}" href="/auth/login.html">Zaloguj się</a>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

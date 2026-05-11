@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Moje karnety — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+  <main class="container" style="padding-top:1rem;padding-bottom:3rem;">
+    <div class="page-header">
+      <div class="breadcrumb"><a th:href="@{/dashboard}">Dashboard</a><span>/</span><span>Moje karnety</span></div>
+      <div class="flex justify-between items-center">
+        <div>
+          <h1>Moje karnety</h1>
+          <p>Historia i aktualny status Twoich karnetów.</p>
+        </div>
+        <a th:href="@{/memberships}" class="btn btn-primary"><i data-lucide="plus" style="width:16px;height:16px;"></i> Kup karnet</a>
+      </div>
+    </div>
+
+    <div th:if="${memberships != null and !memberships.empty}">
+      <div th:each="m : ${memberships}" class="card mb-2 flex justify-between items-center" style="flex-wrap:wrap;gap:1rem;">
+        <div>
+          <div class="font-bold text-lg" th:text="${m.typeName}">Premium</div>
+          <div class="text-sm text-muted">
+            <span th:text="${#temporals.format(m.startDate, 'dd.MM.yyyy')}">01.05.2026</span> —
+            <span th:text="${#temporals.format(m.endDate, 'dd.MM.yyyy')}">31.05.2026</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="badge" th:classappend="${m.active ? 'badge-green' : 'badge-red'}"
+                th:text="${m.active ? 'Aktywny' : 'Wygasły'}">Aktywny</span>
+          <span class="text-sm font-semibold" th:text="${m.price + ' zł'}">149 zł</span>
+        </div>
+      </div>
+    </div>
+
+    <!--/* Static fallback */-->
+    <div th:if="${memberships == null}">
+      <div class="card mb-2 flex justify-between items-center" style="flex-wrap:wrap;gap:1rem;">
+        <div>
+          <div class="font-bold text-lg">Premium</div>
+          <div class="text-sm text-muted">01.05.2026 — 31.05.2026</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="badge badge-green">Aktywny</span>
+          <span class="text-sm font-semibold">149 zł</span>
+        </div>
+      </div>
+      <div class="card mb-2 flex justify-between items-center" style="flex-wrap:wrap;gap:1rem;">
+        <div>
+          <div class="font-bold text-lg">Podstawowy</div>
+          <div class="text-sm text-muted">01.03.2026 — 31.03.2026</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="badge badge-red">Wygasły</span>
+          <span class="text-sm font-semibold">89 zł</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

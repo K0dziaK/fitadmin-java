@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Karnety — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: public}"></div>
+
+  <main class="container" style="padding-top:1rem;padding-bottom:3rem;">
+    <div class="page-header text-center">
+      <h1>Wybierz swój <span class="text-green">karnet</span></h1>
+      <p>Dopasuj plan do swoich potrzeb treningowych.</p>
+    </div>
+
+    <div class="grid grid-3 gap-3">
+      <!--/* Thymeleaf loop - will iterate over membershipTypes from backend */-->
+      <div th:each="type : ${membershipTypes}" class="card pricing-card animate-on-scroll"
+           th:classappend="${type.featured ? 'featured' : ''}">
+        <div th:if="${type.featured}" class="pricing-badge">Najpopularniejszy</div>
+        <div class="pricing-name" th:text="${type.name}">Karnet</div>
+        <div class="pricing-price"><span th:text="${type.price}">149</span> <span>zł</span></div>
+        <div class="pricing-duration">/ <span th:text="${type.durationLabel}">miesiąc</span></div>
+        <ul class="pricing-features">
+          <li th:each="feat : ${type.features}">
+            <i data-lucide="check" style="width:16px;height:16px;"></i>
+            <span th:text="${feat}">Feature</span>
+          </li>
+        </ul>
+        <a th:href="@{/memberships/purchase/{id}(id=${type.id})}" class="btn btn-block"
+           th:classappend="${type.featured ? 'btn-primary' : 'btn-secondary'}">Wybierz</a>
+      </div>
+
+      <!--/* Static fallback */-->
+      <th:block th:if="${membershipTypes == null}">
+        <div class="card pricing-card animate-on-scroll">
+          <div class="pricing-name">Podstawowy</div>
+          <div class="pricing-price">89 <span>zł</span></div>
+          <div class="pricing-duration">/ miesiąc</div>
+          <ul class="pricing-features">
+            <li><i data-lucide="check" style="width:16px;height:16px;"></i> Dostęp do siłowni</li>
+            <li><i data-lucide="check" style="width:16px;height:16px;"></i> Szatnia i prysznice</li>
+            <li><i data-lucide="check" style="width:16px;height:16px;"></i> Godziny: 6:00–22:00</li>
+          </ul>
+          <a href="/memberships/purchase.html" class="btn btn-secondary btn-block">Wybierz</a>
+        </div>
+        <div class="card pricing-card featured animate-on-scroll delay-1">
+          <div class="pricing-badge">Najpopularniejszy</div>
+          <div class="pricing-name">Premium</div>
+          <div class="pricing-price">149 <span>zł</span></div>
+          <div class="pricing-duration">/ miesiąc</div>
+          <ul class="pricing-features">
+            <li><i data-lucide="check" style="width:16px;height:16px;"></i> Dostęp do siłowni</li>
+            <li><i data-lucide="check" style="width:16px;height:16px;"></i> Zajęcia grupowe</li>
+            <li><i data-lucide="check" style="width:16px;height:16px;"></i> Dostęp 24/7</li>
+            <li><i data-lucide="check" style="width:16px;height:16px;"></i> Szafka na zamek</li>
+          </ul>
+          <a href="/memberships/purchase.html" class="btn btn-primary btn-block">Wybierz</a>
+        </div>
+        <div class="card pricing-card animate-on-scroll delay-2">
+          <div class="pricing-name">VIP</div>
+          <div class="pricing-price">249 <span>zł</span></div>
+          <div class="pricing-duration">/ miesiąc</div>
+          <ul class="pricing-features">
+            <li><i data-lucide="check" style="width:16px;height:16px;"></i> Wszystko z Premium</li>
+            <li><i data-lucide="check" style="width:16px;height:16px;"></i> Trener personalny</li>
+            <li><i data-lucide="check" style="width:16px;height:16px;"></i> Plan dietetyczny</li>
+            <li><i data-lucide="check" style="width:16px;height:16px;"></i> Strefa sauna &amp; spa</li>
+          </ul>
+          <a href="/memberships/purchase.html" class="btn btn-secondary btn-block">Wybierz</a>
+        </div>
+      </th:block>
+    </div>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

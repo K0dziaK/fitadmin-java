@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edytuj profil — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+  <main class="container" style="padding-top:1rem;padding-bottom:3rem;">
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a th:href="@{/dashboard}" href="/dashboard/index.html">Dashboard</a>
+        <span>/</span>
+        <span>Profil</span>
+      </div>
+      <h1>Edytuj profil</h1>
+      <p>Zaktualizuj swoje dane osobowe.</p>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success">
+      <i data-lucide="check-circle" style="width:18px;height:18px;"></i>
+      Profil został zaktualizowany pomyślnie.
+    </div>
+
+    <div class="card" style="max-width:600px;">
+      <form th:action="@{/profile}" th:object="${profileForm}" action="#" method="post">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-group">
+            <label class="form-label" for="firstName">Imię</label>
+            <input type="text" id="firstName" th:field="*{firstName}" class="form-input" placeholder="Jan" required value="Jan"/>
+            <p class="form-error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lastName">Nazwisko</label>
+            <input type="text" id="lastName" th:field="*{lastName}" class="form-input" placeholder="Kowalski" required value="Kowalski"/>
+            <p class="form-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Adres e-mail</label>
+          <input type="email" id="email" th:field="*{email}" class="form-input" placeholder="jan@example.com" required value="jan@example.com"/>
+          <p class="form-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="phone">Telefon</label>
+          <input type="tel" id="phone" th:field="*{phone}" class="form-input" placeholder="+48 123 456 789" value="+48 123 456 789"/>
+          <p class="form-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></p>
+        </div>
+        <hr style="border-color:var(--border-glass);margin:1.5rem 0;"/>
+        <p class="text-sm text-muted mb-2">Zmień hasło (opcjonalne)</p>
+        <div class="form-group">
+          <label class="form-label" for="currentPassword">Obecne hasło</label>
+          <input type="password" id="currentPassword" th:field="*{currentPassword}" class="form-input" placeholder="••••••••"/>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-group">
+            <label class="form-label" for="newPassword">Nowe hasło</label>
+            <input type="password" id="newPassword" th:field="*{newPassword}" class="form-input" placeholder="Min. 8 znaków" minlength="8"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="confirmNewPassword">Powtórz nowe hasło</label>
+            <input type="password" id="confirmNewPassword" th:field="*{confirmNewPassword}" class="form-input" placeholder="••••••••"/>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg mt-2">
+          <i data-lucide="save" style="width:18px;height:18px;"></i> Zapisz zmiany
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Statystyki i raporty — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: authenticated}"></div>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-section"><div class="sidebar-title">Przegląd</div>
+        <a href="/admin/dashboard.html"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard</a>
+        <a href="/reports/index.html" class="active"><i data-lucide="bar-chart-3" style="width:18px;height:18px;"></i> Raporty</a>
+      </div>
+      <div class="sidebar-section"><div class="sidebar-title">Zarządzanie</div>
+        <a href="/admin/classes/list.html"><i data-lucide="dumbbell" style="width:18px;height:18px;"></i> Zajęcia</a>
+        <a href="/admin/trainers/list.html"><i data-lucide="users" style="width:18px;height:18px;"></i> Trenerzy</a>
+        <a href="/admin/membership-types/list.html"><i data-lucide="credit-card" style="width:18px;height:18px;"></i> Typy karnetów</a>
+      </div>
+    </aside>
+    <div class="admin-content">
+      <div class="page-header"><h1>Statystyki i <span class="text-blue">raporty</span></h1><p>Analiza danych Twojego klubu fitness.</p></div>
+
+      <!-- Summary stats -->
+      <div class="grid grid-4 gap-3 mb-4">
+        <div class="card stat-card">
+          <div class="stat-value text-green" th:text="${totalClients ?: '156'}">156</div>
+          <div class="stat-label">Łącznie klientów</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-value text-blue" th:text="${newClientsThisMonth ?: '12'}">12</div>
+          <div class="stat-label">Nowych w tym miesiącu</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-value text-purple" th:text="${totalReservationsMonth ?: '234'}">234</div>
+          <div class="stat-label">Rezerwacji w miesiącu</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-value text-orange" th:text="${avgAttendanceRate ?: '78%'}">78%</div>
+          <div class="stat-label">Średnia frekwencja</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+        <div class="card">
+          <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">Popularność zajęć</h2>
+          <div class="chart-container">
+            <canvas id="popularityChart"
+                    th:data-labels="${popularityLabels}"
+                    th:data-values="${popularityValues}"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">Nowi klienci / miesiąc</h2>
+          <div class="chart-container">
+            <canvas id="clientsChart"
+                    th:data-labels="${clientsLabels}"
+                    th:data-values="${clientsValues}"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top trainers table -->
+      <div class="card">
+        <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">Najwyżej oceniani trenerzy</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Trener</th><th>Specjalizacja</th><th>Średnia ocena</th><th>Liczba opinii</th></tr></thead>
+            <tbody>
+              <tr th:each="t : ${topTrainers}">
+                <td class="font-semibold" th:text="${t.fullName}">Anna Nowak</td>
+                <td th:text="${t.specialization}">Yoga</td>
+                <td><span style="color:var(--accent-orange);">★ <span th:text="${t.averageRating}">4.8</span></span></td>
+                <td th:text="${t.ratingsCount}">24</td>
+              </tr>
+              <th:block th:if="${topTrainers == null}">
+                <tr><td class="font-semibold">Anna Nowak</td><td>Yoga, Pilates</td><td><span style="color:var(--accent-orange);">★ 4.8</span></td><td>24</td></tr>
+                <tr><td class="font-semibold">Marek Wiśniewski</td><td>CrossFit, Boxing</td><td><span style="color:var(--accent-orange);">★ 4.5</span></td><td>18</td></tr>
+                <tr><td class="font-semibold">Katarzyna Zielińska</td><td>Spinning, Zumba</td><td><span style="color:var(--accent-orange);">★ 4.3</span></td><td>15</td></tr>
+              </th:block>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

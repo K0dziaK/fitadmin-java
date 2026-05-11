@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="'Zajęcia: ' + (${cls?.name ?: 'Szczegóły'}) + ' — FitAdmin'">Zajęcia — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+  <main class="container" style="padding-top:1rem;padding-bottom:3rem;">
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a th:href="@{/dashboard}">Dashboard</a><span>/</span>
+        <a th:href="@{/classes/schedule}">Grafik</a><span>/</span>
+        <span th:text="${cls?.name ?: 'Szczegóły'}">Yoga poranna</span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;">
+      <!-- Class details -->
+      <div>
+        <div class="card mb-4">
+          <h1 style="font-size:1.75rem;font-weight:800;margin-bottom:0.5rem;" th:text="${cls?.name}">Yoga poranna</h1>
+          <div class="flex gap-2 items-center mb-2" style="flex-wrap:wrap;">
+            <span class="badge badge-blue" th:text="${cls?.dayLabel ?: 'Poniedziałek'}">Poniedziałek</span>
+            <span class="badge badge-purple" th:text="${cls?.time ?: '08:00'}">08:00</span>
+            <span class="badge badge-orange" th:text="${(cls?.duration ?: 60) + ' min'}">60 min</span>
+          </div>
+          <p class="text-muted" th:text="${cls?.description}">
+            Zajęcia yoga poranna to idealne rozpoczęcie dnia. Ćwiczenia oddechowe, rozciąganie i medytacja poprawią Twoje samopoczucie na cały dzień.
+          </p>
+          <hr style="border-color:var(--border-glass);margin:1.5rem 0;"/>
+          <div class="flex gap-4" style="flex-wrap:wrap;">
+            <div><span class="text-sm text-muted">Trener</span><div class="font-semibold" th:text="${cls?.trainerName}">Anna Nowak</div></div>
+            <div><span class="text-sm text-muted">Maks. uczestników</span><div class="font-semibold" th:text="${cls?.maxSpots}">15</div></div>
+            <div><span class="text-sm text-muted">Wolne miejsca</span><div class="font-semibold text-green" th:text="${cls?.spotsLeft}">5</div></div>
+          </div>
+        </div>
+
+        <!-- Rating section -->
+        <div class="card">
+          <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">Oceny i opinie</h2>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-2xl font-bold text-orange" th:text="${cls?.averageRating ?: '4.2'}">4.2</span>
+            <span class="text-muted text-sm">/ 5 (<span th:text="${cls?.ratingsCount ?: '12'}">12</span> opinii)</span>
+          </div>
+
+          <!-- Rating form (only for authenticated users who attended) -->
+          <div sec:authorize="isAuthenticated()">
+            <form th:action="@{/classes/{id}/rate(id=${cls?.id})}" method="post" class="card" style="background:var(--bg-glass);">
+              <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:0.75rem;">Oceń te zajęcia</h3>
+              <input type="hidden" name="rating" value="0"/>
+              <div class="stars mb-2">
+                <i data-lucide="star" style="width:24px;height:24px;"></i>
+                <i data-lucide="star" style="width:24px;height:24px;"></i>
+                <i data-lucide="star" style="width:24px;height:24px;"></i>
+                <i data-lucide="star" style="width:24px;height:24px;"></i>
+                <i data-lucide="star" style="width:24px;height:24px;"></i>
+              </div>
+              <div class="form-group">
+                <textarea name="comment" class="form-input" rows="3" placeholder="Napisz opinię (opcjonalnie)..." style="resize:vertical;"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="send" style="width:14px;height:14px;"></i> Wyślij ocenę</button>
+            </form>
+          </div>
+
+          <!-- Existing reviews -->
+          <div class="mt-3" th:if="${reviews != null}">
+            <div th:each="rev : ${reviews}" style="padding:0.75rem 0;border-bottom:1px solid var(--border-glass);">
+              <div class="flex justify-between items-center">
+                <span class="font-semibold" th:text="${rev.userName}">Jan K.</span>
+                <span class="text-sm text-muted" th:text="${#temporals.format(rev.createdAt, 'dd.MM.yyyy')}">10.05.2026</span>
+              </div>
+              <div class="stars" style="cursor:default;margin:0.25rem 0;">
+                <i th:each="i : ${#numbers.sequence(1,5)}" data-lucide="star"
+                   th:classappend="${i <= rev.rating ? 'active' : ''}"
+                   style="width:14px;height:14px;"></i>
+              </div>
+              <p class="text-sm text-muted" th:text="${rev.comment}" th:if="${rev.comment}">Świetne zajęcia!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar: sign up / cancel -->
+      <div>
+        <div class="card" style="position:sticky;top:80px;">
+          <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">Rezerwacja</h2>
+
+          <div th:if="${!isReserved}">
+            <p class="text-sm text-muted mb-2">Zapisz się na te zajęcia, aby zarezerwować miejsce.</p>
+            <form th:action="@{/classes/{id}/reserve(id=${cls?.id})}" method="post">
+              <button type="submit" class="btn btn-primary btn-block btn-lg"
+                      th:disabled="${cls?.spotsLeft != null and cls.spotsLeft <= 0}">
+                <i data-lucide="calendar-plus" style="width:18px;height:18px;"></i> Zapisz się
+              </button>
+            </form>
+          </div>
+
+          <div th:if="${isReserved}">
+            <div class="alert alert-success mb-2">
+              <i data-lucide="check-circle" style="width:18px;height:18px;"></i>
+              Jesteś zapisany na te zajęcia!
+            </div>
+            <form th:action="@{/classes/{id}/cancel(id=${cls?.id})}" method="post">
+              <button type="submit" class="btn btn-danger btn-block">
+                <i data-lucide="calendar-x" style="width:16px;height:16px;"></i> Wypisz się
+              </button>
+            </form>
+          </div>
+
+          <!--/* Static fallback */-->
+          <div th:if="${cls == null}">
+            <p class="text-sm text-muted mb-2">Zapisz się na te zajęcia, aby zarezerwować miejsce.</p>
+            <button class="btn btn-primary btn-block btn-lg">
+              <i data-lucide="calendar-plus" style="width:18px;height:18px;"></i> Zapisz się
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

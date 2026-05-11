@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kup karnet — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+  <main class="container" style="padding-top:1rem;padding-bottom:3rem;">
+    <div class="page-header">
+      <div class="breadcrumb"><a th:href="@{/dashboard}">Dashboard</a><span>/</span><a th:href="@{/memberships}">Karnety</a><span>/</span><span>Zakup</span></div>
+      <h1>Kup karnet</h1>
+      <p>Potwierdź zakup wybranego karnetu.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:800px;">
+      <!-- Order summary -->
+      <div class="card">
+        <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">Podsumowanie</h2>
+        <div style="padding:1rem 0;border-bottom:1px solid var(--border-glass);">
+          <div class="font-semibold text-lg" th:text="${membershipType?.name ?: 'Premium'}">Premium</div>
+          <div class="text-sm text-muted" th:text="${membershipType?.durationLabel ?: '30 dni'}">30 dni</div>
+        </div>
+        <div class="flex justify-between items-center mt-2">
+          <span class="text-muted">Cena</span>
+          <span class="font-bold" th:text="${membershipType?.price ?: '149'} + ' zł'">149 zł</span>
+        </div>
+        <div id="discountRow" class="flex justify-between items-center mt-1" style="display:none;">
+          <span class="text-muted">Rabat</span>
+          <span class="font-bold text-green" id="discountAmount">-0 zł</span>
+        </div>
+        <hr style="border-color:var(--border-glass);margin:1rem 0;"/>
+        <div class="flex justify-between items-center">
+          <span class="font-bold text-lg">Do zapłaty</span>
+          <span class="font-bold text-lg text-green" id="totalPrice" th:text="${membershipType?.price ?: '149'} + ' zł'">149 zł</span>
+        </div>
+      </div>
+
+      <!-- Purchase form -->
+      <div class="card">
+        <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">Formularz zakupu</h2>
+        <form th:action="@{/memberships/purchase}" action="#" method="post">
+          <input type="hidden" name="membershipTypeId" th:value="${membershipType?.id}" value="2"/>
+
+          <!-- Discount code field -->
+          <div class="form-group">
+            <label class="form-label" for="discountCode">Kod rabatowy (opcjonalnie)</label>
+            <div class="discount-field">
+              <input type="text" id="discountCode" name="discountCode" class="form-input" placeholder="np. FIT2026"/>
+              <button type="button" id="applyDiscount" class="btn btn-secondary btn-sm">Zastosuj</button>
+            </div>
+            <div id="discountResult" class="discount-result"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Metoda płatności</label>
+            <select class="form-select" name="paymentMethod">
+              <option value="CARD">Karta płatnicza</option>
+              <option value="BLIK">BLIK</option>
+              <option value="TRANSFER">Przelew bankowy</option>
+            </select>
+          </div>
+
+          <div th:if="${error}" class="alert alert-error">
+            <i data-lucide="alert-circle" style="width:18px;height:18px;"></i>
+            <span th:text="${error}">Błąd</span>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg mt-2">
+            <i data-lucide="shopping-cart" style="width:18px;height:18px;"></i> Kup karnet
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

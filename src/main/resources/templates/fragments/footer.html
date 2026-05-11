@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <footer class="footer" th:fragment="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a th:href="@{/}" href="/" class="navbar-brand">
+            <img th:src="@{/images/logo.svg}" src="/images/logo.svg" alt="FitAdmin" style="width:28px;height:28px;"/>
+            <span>Fit<span class="brand-accent">Admin</span></span>
+          </a>
+          <p>Nowoczesny system zarządzania siłownią. Karnety, zajęcia, rezerwacje — wszystko w jednym miejscu.</p>
+        </div>
+        <div>
+          <div class="footer-title">Nawigacja</div>
+          <div class="footer-links">
+            <a th:href="@{/}" href="/">Strona główna</a>
+            <a th:href="@{/memberships}" href="/memberships/list.html">Karnety</a>
+            <a th:href="@{/classes/schedule}" href="/classes/schedule.html">Grafik zajęć</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-title">Konto</div>
+          <div class="footer-links">
+            <a th:href="@{/login}" href="/auth/login.html">Logowanie</a>
+            <a th:href="@{/register}" href="/auth/register.html">Rejestracja</a>
+            <a th:href="@{/profile}" href="/profile/edit.html">Profil</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-title">Kontakt</div>
+          <div class="footer-links">
+            <a href="mailto:kontakt@fitadmin.pl">kontakt@fitadmin.pl</a>
+            <a href="tel:+48123456789">+48 123 456 789</a>
+            <span style="color:var(--text-secondary);font-size:0.9rem;">ul. Sportowa 15, Kraków</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 FitAdmin. Wszystkie prawa zastrzeżone.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

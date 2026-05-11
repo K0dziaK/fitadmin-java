@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grafik zajęć — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: public}"></div>
+
+  <main class="container" style="padding-top:1rem;padding-bottom:3rem;">
+    <div class="page-header">
+      <h1>Grafik <span class="text-green">zajęć</span></h1>
+      <p>Przeglądaj dostępne zajęcia grupowe i zapisuj się online.</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4" style="padding:1rem 1.5rem;">
+      <form class="flex gap-3 items-center" style="flex-wrap:wrap;" th:action="@{/classes/schedule}" method="get">
+        <div class="form-group" style="margin-bottom:0;flex:1;min-width:150px;">
+          <label class="form-label">Dzień</label>
+          <select class="form-select" name="day">
+            <option value="">Wszystkie</option>
+            <option value="MON" th:selected="${param.day == 'MON'}">Poniedziałek</option>
+            <option value="TUE" th:selected="${param.day == 'TUE'}">Wtorek</option>
+            <option value="WED" th:selected="${param.day == 'WED'}">Środa</option>
+            <option value="THU" th:selected="${param.day == 'THU'}">Czwartek</option>
+            <option value="FRI" th:selected="${param.day == 'FRI'}">Piątek</option>
+            <option value="SAT" th:selected="${param.day == 'SAT'}">Sobota</option>
+            <option value="SUN" th:selected="${param.day == 'SUN'}">Niedziela</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;flex:1;min-width:150px;">
+          <label class="form-label">Typ zajęć</label>
+          <select class="form-select" name="type">
+            <option value="">Wszystkie</option>
+            <option th:each="t : ${classTypes}" th:value="${t}" th:text="${t}">Yoga</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;flex:1;min-width:150px;">
+          <label class="form-label">Trener</label>
+          <select class="form-select" name="trainer">
+            <option value="">Wszyscy</option>
+            <option th:each="tr : ${trainers}" th:value="${tr.id}" th:text="${tr.fullName}">Anna Nowak</option>
+          </select>
+        </div>
+        <div style="padding-top:1.25rem;">
+          <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="filter" style="width:14px;height:14px;"></i> Filtruj</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Schedule grid (list view) -->
+    <div class="grid grid-3 gap-3">
+      <div th:each="cls : ${classes}" class="card schedule-slot animate-on-scroll" style="min-height:auto;cursor:default;">
+        <div class="flex justify-between items-center mb-2">
+          <span class="slot-time" th:text="${cls.dayLabel + ' · ' + cls.time}">Poniedziałek · 08:00</span>
+          <span class="badge badge-green" th:if="${cls.spotsLeft > 0}" th:text="${cls.spotsLeft + ' miejsc'}">5 miejsc</span>
+          <span class="badge badge-red" th:if="${cls.spotsLeft <= 0}">Brak miejsc</span>
+        </div>
+        <div class="slot-name text-lg font-bold" th:text="${cls.name}">Yoga poranna</div>
+        <div class="slot-trainer mt-1" th:text="'Trener: ' + ${cls.trainerName}">Trener: Anna Nowak</div>
+        <div class="text-sm text-muted mt-1" th:text="${cls.duration + ' min'}">60 min</div>
+        <div class="mt-2">
+          <a th:href="@{/classes/{id}(id=${cls.id})}" class="btn btn-primary btn-sm btn-block">
+            <i data-lucide="info" style="width:14px;height:14px;"></i> Szczegóły &amp; Zapis
+          </a>
+        </div>
+      </div>
+
+      <!--/* Static fallback */-->
+      <th:block th:if="${classes == null}">
+        <div class="card animate-on-scroll" style="cursor:default;">
+          <div class="flex justify-between items-center mb-2">
+            <span class="slot-time" style="color:var(--accent-green);font-weight:600;">Poniedziałek · 08:00</span>
+            <span class="badge badge-green">5 miejsc</span>
+          </div>
+          <div class="text-lg font-bold">Yoga poranna</div>
+          <div style="color:var(--text-muted);font-size:0.8rem;" class="mt-1">Trener: Anna Nowak</div>
+          <div class="text-sm text-muted mt-1">60 min</div>
+          <div class="mt-2"><a href="/classes/detail.html" class="btn btn-primary btn-sm btn-block"><i data-lucide="info" style="width:14px;height:14px;"></i> Szczegóły &amp; Zapis</a></div>
+        </div>
+        <div class="card animate-on-scroll delay-1" style="cursor:default;">
+          <div class="flex justify-between items-center mb-2">
+            <span class="slot-time" style="color:var(--accent-green);font-weight:600;">Poniedziałek · 18:00</span>
+            <span class="badge badge-green">3 miejsc</span>
+          </div>
+          <div class="text-lg font-bold">CrossFit</div>
+          <div style="color:var(--text-muted);font-size:0.8rem;" class="mt-1">Trener: Marek Wiśniewski</div>
+          <div class="text-sm text-muted mt-1">45 min</div>
+          <div class="mt-2"><a href="/classes/detail.html" class="btn btn-primary btn-sm btn-block"><i data-lucide="info" style="width:14px;height:14px;"></i> Szczegóły &amp; Zapis</a></div>
+        </div>
+        <div class="card animate-on-scroll delay-2" style="cursor:default;">
+          <div class="flex justify-between items-center mb-2">
+            <span class="slot-time" style="color:var(--accent-green);font-weight:600;">Wtorek · 17:00</span>
+            <span class="badge badge-red">Brak miejsc</span>
+          </div>
+          <div class="text-lg font-bold">Spinning</div>
+          <div style="color:var(--text-muted);font-size:0.8rem;" class="mt-1">Trener: Katarzyna Zielińska</div>
+          <div class="text-sm text-muted mt-1">50 min</div>
+          <div class="mt-2"><a href="/classes/detail.html" class="btn btn-secondary btn-sm btn-block"><i data-lucide="info" style="width:14px;height:14px;"></i> Szczegóły</a></div>
+        </div>
+        <div class="card animate-on-scroll delay-3" style="cursor:default;">
+          <div class="flex justify-between items-center mb-2">
+            <span class="slot-time" style="color:var(--accent-green);font-weight:600;">Środa · 10:00</span>
+            <span class="badge badge-green">8 miejsc</span>
+          </div>
+          <div class="text-lg font-bold">Pilates</div>
+          <div style="color:var(--text-muted);font-size:0.8rem;" class="mt-1">Trener: Anna Nowak</div>
+          <div class="text-sm text-muted mt-1">55 min</div>
+          <div class="mt-2"><a href="/classes/detail.html" class="btn btn-primary btn-sm btn-block"><i data-lucide="info" style="width:14px;height:14px;"></i> Szczegóły &amp; Zapis</a></div>
+        </div>
+        <div class="card animate-on-scroll delay-4" style="cursor:default;">
+          <div class="flex justify-between items-center mb-2">
+            <span class="slot-time" style="color:var(--accent-green);font-weight:600;">Czwartek · 19:00</span>
+            <span class="badge badge-green">2 miejsc</span>
+          </div>
+          <div class="text-lg font-bold">Boxing</div>
+          <div style="color:var(--text-muted);font-size:0.8rem;" class="mt-1">Trener: Tomasz Kowalski</div>
+          <div class="text-sm text-muted mt-1">60 min</div>
+          <div class="mt-2"><a href="/classes/detail.html" class="btn btn-primary btn-sm btn-block"><i data-lucide="info" style="width:14px;height:14px;"></i> Szczegóły &amp; Zapis</a></div>
+        </div>
+        <div class="card animate-on-scroll" style="cursor:default;">
+          <div class="flex justify-between items-center mb-2">
+            <span class="slot-time" style="color:var(--accent-green);font-weight:600;">Piątek · 16:00</span>
+            <span class="badge badge-green">10 miejsc</span>
+          </div>
+          <div class="text-lg font-bold">Zumba</div>
+          <div style="color:var(--text-muted);font-size:0.8rem;" class="mt-1">Trener: Maria Lewandowska</div>
+          <div class="text-sm text-muted mt-1">50 min</div>
+          <div class="mt-2"><a href="/classes/detail.html" class="btn btn-primary btn-sm btn-block"><i data-lucide="info" style="width:14px;height:14px;"></i> Szczegóły &amp; Zapis</a></div>
+        </div>
+      </th:block>
+    </div>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

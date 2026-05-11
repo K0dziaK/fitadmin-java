@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Użytkownicy — FitAdmin</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/images/logo.svg}" href="/images/logo.svg"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div th:replace="~{fragments/navbar :: authenticated}"></div>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-section"><div class="sidebar-title">Zarządzanie</div>
+        <a href="/admin/dashboard.html"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Dashboard</a>
+        <a href="/admin/classes/list.html"><i data-lucide="dumbbell" style="width:18px;height:18px;"></i> Zajęcia</a>
+        <a href="/admin/trainers/list.html"><i data-lucide="users" style="width:18px;height:18px;"></i> Trenerzy</a>
+        <a href="/admin/membership-types/list.html"><i data-lucide="credit-card" style="width:18px;height:18px;"></i> Typy karnetów</a>
+        <a href="/admin/users/list.html" class="active"><i data-lucide="user-cog" style="width:18px;height:18px;"></i> Użytkownicy</a>
+        <a href="/admin/attendance/list.html"><i data-lucide="clipboard-check" style="width:18px;height:18px;"></i> Lista obecności</a>
+      </div>
+    </aside>
+    <div class="admin-content">
+      <div class="page-header"><h1>Użytkownicy</h1><p>Lista wszystkich zarejestrowanych użytkowników.</p></div>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Imię i nazwisko</th><th>Email</th><th>Telefon</th><th>Rola</th><th>Karnet</th><th>Data rejestracji</th></tr></thead>
+          <tbody>
+            <tr th:each="u : ${users}">
+              <td class="font-semibold" th:text="${u.firstName + ' ' + u.lastName}">Jan Kowalski</td>
+              <td th:text="${u.email}">jan@example.com</td>
+              <td th:text="${u.phone}">+48 123 456 789</td>
+              <td><span class="badge" th:classappend="${u.role == 'ADMIN' ? 'badge-purple' : (u.role == 'TRAINER' ? 'badge-blue' : 'badge-green')}" th:text="${u.role}">CLIENT</span></td>
+              <td><span class="badge" th:classappend="${u.hasMembership ? 'badge-green' : 'badge-red'}" th:text="${u.hasMembership ? 'Aktywny' : 'Brak'}">Aktywny</span></td>
+              <td th:text="${#temporals.format(u.createdAt, 'dd.MM.yyyy')}">01.05.2026</td>
+            </tr>
+            <th:block th:if="${users == null}">
+              <tr><td class="font-semibold">Jan Kowalski</td><td>jan@example.com</td><td>+48 123 456 789</td><td><span class="badge badge-green">CLIENT</span></td><td><span class="badge badge-green">Aktywny</span></td><td>01.05.2026</td></tr>
+              <tr><td class="font-semibold">Anna Nowak</td><td>anna@fitadmin.pl</td><td>+48 111 222 333</td><td><span class="badge badge-blue">TRAINER</span></td><td><span class="badge badge-green">Aktywny</span></td><td>15.01.2026</td></tr>
+              <tr><td class="font-semibold">Admin Admin</td><td>admin@fitadmin.pl</td><td>+48 999 888 777</td><td><span class="badge badge-purple">ADMIN</span></td><td><span class="badge badge-red">Brak</span></td><td>01.01.2026</td></tr>
+            </th:block>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" th:if="${totalPages > 1}">
+        <a th:if="${currentPage > 0}" th:href="@{/admin/users(page=${currentPage - 1})}">← Poprzednia</a>
+        <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+          <a th:href="@{/admin/users(page=${i})}" th:text="${i + 1}" th:classappend="${i == currentPage ? 'active' : ''}">1</a>
+        </th:block>
+        <a th:if="${currentPage < totalPages - 1}" th:href="@{/admin/users(page=${currentPage + 1})}">Następna →</a>
+      </div>
+    </div>
+  </div>
+  <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
